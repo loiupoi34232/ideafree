@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LiveWorks</title>
+  <link rel="stylesheet" href="reg.css" />
+</head>
+<body style="background-color: #121212; color: white; font-family: sans-serif;">
+  <div id="includedContent"></div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      fetch("styles.html")
+        .then(response => {
+          if (!response.ok) throw new Error("Failed to load styles.html");
+          return response.text();
+        })
+        .then(data => {
+          document.getElementById("includedContent").innerHTML = data;
+        })
+        .catch(error => {
+          console.error("Error loading styles.html:", error);
+        });
+    });
+  </script>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  <center><button id="go1" class="button" type="button">Start</button></center>
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("go1").addEventListener("click", function () {
+      window.location.href = "p1.html";
+    });
+  });
+</script>
+</body>
+</html>
