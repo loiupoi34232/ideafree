@@ -1,0 +1,49 @@
+body {
+    background-color: #00001a;
+}
+
+h1 {
+    color: white;
+    text-align: center;
+}
+
+.center {
+    color: white;
+    text-align: center;
+}
+
+.enum {
+    color: white;
+    text-align: center;
+    display: grid;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  background-color: #02022b;
+  padding: 10px;
+}
+
+.container > div {
+  background-color: #01012fda;
+  border: 1px solid rgb(0,0,0);
+  padding: 20px;
+  font-size: 15px;
+  text-align: center;
+}
+
+.input {
+    background-color: #03034ada;
+    border-color: greenyellow;
+    color:white;
+}
+
+.button {
+    background-color: #74b316;
+    color: #adff2f;
+    width: 100px;       
+    height: 40px;
+    font-size: 18px;    
+    text-align: center; 
+}

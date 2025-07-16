@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiveWorks</title>
+    <link rel="stylesheet" href="reg.css">
+     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div id="includedContent"></div>
+        <h2 class="center">Step 2</h2>
+<p id="name" style="color: black;">Full Name: <span id="name"></span></p>
+<p id="addr" style="color: black;">Address: <span id="address"></span></p>
+<p id="zipc" style="color: black;">ZIP: <span id="zip"></span></p>
+<p id="lcna" style="color: black;">License Accepted: <span id="license"></span></p>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+        fetch("styles.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("includedContent").innerHTML = data;
+      });
+  const params = new URLSearchParams(location.search);
+  const compressed = params.get("CurrentState");
+
+  try {
+    const json = atob(decodeURIComponent(compressed)); // ← Тоже ВАЖНО!
+    const state = JSON.parse(json);
+
+    // Отобразить данные:
+    document.getElementById("name").textContent = state.name;
+    document.getElementById("address").textContent = state.address;
+    document.getElementById("zip").textContent = state.zip;
+    document.getElementById("license").textContent = state.license ? "Yes" : "No";
+
+  } catch (e) {
+    alert("There an data recognition fault so please return to the first page" + e)
+  }
+});
+</script>
+    <h2 class="center">Step 2</h2>
+    <br>
+    <br>
+    <form id="sent">
+        <p style="color: white;">Your Country (Latine Only Allowed) <font color="#FF0000">*</font></p>
+        <input id="country" class="input" type="search" minlength="3" autocomplete="off" inputmode="latin-name" title="Your Real Name">
+        <br>
+        <br>
+        <p style="color: white;">Your Current Buisness Deal (Latine Only Allowed)<font color="#FF0000">*</font></p>
+        <input id="buisness_deal" class="input" type="search" minlength="3" autocomplete="off" inputmode="latin-name" title="Your Real Live Address">
+        <br>
+        <br>
+        <p style="color: white;">Your Company Name (type Sole if your alone and didn`t have company)<font color="#FF0000">*</font></p>
+        <input id="company" class="input" type="search" minlength="3" maxlength="20" autocomplete="off" inputmode="latin-name" title="Your Real ZIP Index">
+        <br>
+        <br>
+        <p style="color: white;">Your Bank (Latine Only Allowed)<font color="#FF0000">*</font></p>
+        <input id="bank" class="input" type="search" minlength="3" maxlength="15" autocomplete="off" inputmode="latin-name" title="Your Real ZIP Index">
+        <br>
+        <div style="text-align: center;">
+            <button type="submit" class="button">Submit</button>
+        </div>
+    </form>
+    <!--Next Page Data Transfer-->
+    <script>
+        document.getElementById("sent").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const state = {
+            name: document.getElementById("name").textContent.trim(),
+            address: document.getElementById("addr").textContent.trim(),
+            zip: document.getElementById("zipc").textContent.trim(),
+            license: document.getElementById("lcna").textContent,
+            county: document.getElementById("country").value.trim(),
+            buisness_deal: document.getElementById("buisness_deal").value.trim(),
+            company: document.getElementById("company").value.trim(),
+            bank: document.getElementById("bank").value.trim(),
+        };
+
+        const json = JSON.stringify(state);
+const encoded = encodeURIComponent(btoa(json));
+window.location.href = `p3.html?CurrentState=${encoded}`;
+
+        });
+    </script> 
+</body>
+</html>

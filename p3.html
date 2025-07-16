@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LiveWorks - Step 3</title>
+  <link rel="stylesheet" href="reg.css" />
+</head>
+<body style="background-color: #121212; color: white; font-family: sans-serif;">
+  <div id="includedContent"></div>
+
+  <h2 class="center">Step 3</h2>
+  <p>Full Name: <span id="name"></span></p>
+  <p>Address: <span id="address"></span></p>
+  <p>ZIP: <span id="zip"></span></p>
+  <p>License Accepted: <span id="license"></span></p>
+  <p>Country: <span id="county"></span></p>
+  <p>Business Deal: <span id="buisness_deal"></span></p>
+  <p>Company: <span id="company"></span></p>
+  <p>Bank: <span id="bank"></span></p>
+
+  <form id="sent">
+    <p style="color: white;">Type "I accept" (Latin Only) <font color="#FF0000">*</font></p>
+    <input id="tearmsaccept" class="input" type="text" minlength="3" required autocomplete="off" title="Type 'I accept' to proceed">
+    <div style="text-align: center; margin-top: 10px;">
+      <button type="submit" class="button">Submit</button>
+    </div>
+  </form>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Загружаем дополнительный HTML (если нужно)
+    fetch("styles.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("includedContent").innerHTML = data;
+      });
+
+    // Получаем параметры
+    const params = new URLSearchParams(location.search);
+    const encoded = params.get("CurrentState");
+
+    if (!encoded) {
+      alert("Missing data. Please return to Step 1.");
+      return;
+    }
+
+    let state;
+    try {
+      // Декодируем state
+      const json = atob(decodeURIComponent(encoded));
+      state = JSON.parse(json);
+      console.log("Loaded state:", state);
+
+      // Отображаем в DOM
+      document.getElementById("name").textContent = state.name || "";
+      document.getElementById("address").textContent = state.address || "";
+      document.getElementById("zip").textContent = state.zip || "";
+      document.getElementById("license").textContent = state.license ? "Yes" : "No";
+      document.getElementById("county").textContent = state.county || "";
+      document.getElementById("buisness_deal").textContent = state.buisness_deal || "";
+      document.getElementById("company").textContent = state.company || "";
+      document.getElementById("bank").textContent = state.bank || "";
+    } catch (e) {
+      alert("Failed to decode data. Please restart from Step 1.\n" + e.message);
+      return;
+    }
+
+    // Обработка формы
+    document.getElementById("sent").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const inputText = document.getElementById("tearmsaccept").value.trim();
+      if (inputText !== "I accept") {
+        alert("You must type 'I accept' exactly.");
+        return;
+      }
+
+      // Добавляем поле "ism"
+      const updatedState = {
+        ...state,
+        ism: "yes"
+      };
+
+      // Кодируем и переходим на p4.html
+      const newJson = JSON.stringify(updatedState);
+      const encodedState = encodeURIComponent(btoa(newJson));
+      window.location.href = `p4.html?CurrentState=${encodedState}`;
+    });
+  });
+  </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LiveWorks</title>
+  <link rel="stylesheet" href="reg.css" />
+</head>
+<body style="background-color: #121212; color: white; font-family: sans-serif;">
+  <div id="includedContent"></div>
+
+  <h2 class="center">Step 1</h2>
+  <br><br>
+
+  <form id="sent">
+    <p>Your Full Name (Latin Only Allowed) <font color="#FF0000">*</font></p>
+    <input id="fullName" class="input" type="text" minlength="5" required autocomplete="off" pattern="[A-Za-z\s]+" title="Your Real Name"/>
+
+    <br><br>
+
+    <p>Your Current Live Address (Latin Only Allowed) <font color="#FF0000">*</font></p>
+    <input id="address" class="input" type="text" minlength="5" required autocomplete="off" pattern="[A-Za-z0-9\s,.-]+" title="Your Real Live Address"/>
+
+    <br><br>
+
+    <p>Your Zip Code <font color="#FF0000">*</font></p>
+    <input id="zip" class="input" type="text" minlength="6" maxlength="6" required pattern="\d{6}" autocomplete="off" title="Your ZIP Code"/>
+
+    <br><br>
+
+    <p>I have read the full license agreement and accept its conditions <font color="#FF0000">*</font></p>
+    <input id="licenseChkBox" class="input" type="checkbox" required/>
+
+    <br><br>
+
+    <div style="text-align: center;">
+      <button type="submit" class="button">Submit</button>
+    </div>
+  </form>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Загрузка внешнего HTML
+      fetch("styles.html")
+        .then(response => {
+          if (!response.ok) throw new Error("Failed to load styles.html");
+          return response.text();
+        })
+        .then(data => {
+          document.getElementById("includedContent").innerHTML = data;
+
+          const form = document.getElementById("sent");
+
+          form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const licenseAccepted = document.getElementById("licenseChkBox").checked;
+            if (!licenseAccepted) {
+              alert("Please accept the license agreement");
+              return;
+            }
+
+            const state = {
+              name: document.getElementById("fullName").value.trim(),
+              address: document.getElementById("address").value.trim(),
+              zip: document.getElementById("zip").value.trim(),
+              license: true
+            };
+
+            const json = JSON.stringify(state);
+            const compressed = encodeURIComponent(btoa(json));
+            window.location.href = `p2.html?CurrentState=${compressed}`;
+          });
+        })
+        .catch(err => {
+          console.error("Error loading included content:", err);
+        });
+    });
+  </script>
+</body>
+</html>
