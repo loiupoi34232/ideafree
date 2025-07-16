@@ -42,7 +42,7 @@ h1 {
 .button {
     background-color: #74b316;
     color: #adff2f;
-    width: 100px;       
+    width: auto;       
     height: 40px;
     font-size: 18px;    
     text-align: center; 

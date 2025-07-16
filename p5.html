@@ -1,0 +1,96 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LiveWorks</title>
+  <link rel="stylesheet" href="reg.css"/>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body style="background-color: #121212; color: white; font-family: sans-serif;">
+  <div id="includedContent"></div>
+
+  <h2 class="center">
+    ✔️ Congratulations! You completed LiveWorks Pre-Registration Successfully!<br>
+    Now please, wait for Documents approve and continue registration
+  </h2>
+
+  <!-- Stripe Card UI -->
+  <div style="max-width: 400px; margin: 2em auto; padding: 20px; background: #1e1e1e; border-radius: 12px;">
+    <label for="card-element" style="color: white;">Card Info:</label>
+    <div id="card-element" style="margin: 10px 0; background: white; border-radius: 8px; padding: 10px;"></div>
+    <button id="pay1" class="button" type="button" style="margin-top: 15px;">💳 Pay $10</button>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+      // Вставка внешнего HTML (если есть)
+      fetch("styles.html")
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById("includedContent").innerHTML = data;
+        });
+
+      const params = new URLSearchParams(location.search);
+      const encoded = params.get("CurrentState");
+
+      if (!encoded) {
+        alert("❌ Missing registration data. Please start from Step 1.");
+        return;
+      }
+
+      try {
+        const decodedJson = atob(decodeURIComponent(encoded));
+        const state = JSON.parse(decodedJson);
+        console.log("✅ Final state received:", state);
+      } catch (e) {
+        alert("❌ Data recognition failed. Please return to the first page.\n\nError: " + e.message);
+        return;
+      }
+
+      // Stripe setup
+      const stripe = Stripe("pk_test_51RlVeKQfx5zhPqoKznqtHYNxTzS5Q1Sh2rJsHYd05Yh4xDWiQiTRheOdc7ew8vMQOw3kGWuN4HlHfGJ2c2Aow2ft00uaFt0Icg"); // Вставь свой публичный ключ!
+      const elements = stripe.elements();
+      const card = elements.create("card", {
+        style: {
+          base: {
+            fontSize: '16px',
+            color: '#ffffff',
+            '::placeholder': { color: '#888' },
+          },
+          invalid: {
+            color: '#ff6b6b'
+          }
+        }
+      });
+      card.mount("#card-element");
+
+      // Кнопка оплаты
+      document.getElementById("pay1").addEventListener("click", async function () {
+        const res = await fetch("/api/payment-intent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: 1000 })
+        });
+
+        const data = await res.json();
+        if (data.error) {
+          alert("❌ Ошибка с сервера: " + data.error);
+          return;
+        }
+
+        const result = await stripe.confirmCardPayment(data.clientSecret, {
+          payment_method: { card: card }
+        });
+
+        if (result.error) {
+          alert("❌ Ошибка оплаты: " + result.error.message);
+        } else if (result.paymentIntent.status === "succeeded") {
+          alert("✅ Оплата прошла успешно!");
+          window.location.href = "p4.html";
+        }
+      });
+    });
+  </script>
+</body>
+</html>

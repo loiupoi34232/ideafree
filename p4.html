@@ -5,25 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>LiveWorks</title>
   <link rel="stylesheet" href="reg.css"/>
+  <script src="https://js.stripe.com/v3/"></script>
 </head>
+
 <body style="background-color: #121212; color: white; font-family: sans-serif;">
   <div id="includedContent"></div>
 
-  <h2 class="center">✔️ Congratulations! You completed LiveWorks Registration! Now you can distribute games!</h2>
-  <br><br>
+  <h2 class="center">
+    ✔️ Congratulations! You completed LiveWorks Pre-Registration Successfully!<br>
+    Now please, wait for documents to be approved and continue registration
+  </h2>
+  <br>
 
-  <p class="center">Full Name: <span id="name_c"></span></p>
-  <p class="center">Address: <span id="addr_c"></span></p>
-  <p class="center">ZIP: <span id="zip_c"></span></p>
-  <p class="center">License Accepted: <span id="lic_c"></span></p>
-  <p class="center">Country: <span id="country_c"></span></p>
-  <p class="center">Business Deal: <span id="bdeal_c"></span></p>
-  <p class="center">Company: <span id="comp_c"></span></p>
-  <p class="center">Bank: <span id="bank_c"></span></p>
+  <!-- Stripe Card UI -->
+  <div style="max-width: 400px; margin: auto; padding: 20px; background: #1e1e1e; border-radius: 12px;">
+    <label for="card-element" style="color: white;">Card Information:</label>
+    <div id="card-element" style="margin: 10px 0; background: white; border-radius: 8px; padding: 10px;"></div>
+    <button id="pay1" class="button" type="button" style="margin-top: 15px;">💳 Pay $10</button>
+  </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // Загружаем внешний HTML-файл (если он есть)
+    document.addEventListener("DOMContentLoaded", async function () {
+      // Подключение внешнего блока (если нужно)
       fetch("styles.html")
         .then(response => response.text())
         .then(data => {
@@ -39,23 +42,57 @@
       }
 
       try {
-        const decodedJson = atob(decodeURIComponent(encoded)); // 🔥 decode base64 + URI
+        const decodedJson = atob(decodeURIComponent(encoded));
         const state = JSON.parse(decodedJson);
-
-        // Устанавливаем данные в DOM
-        document.getElementById("name_c").textContent = state.name || "";
-        document.getElementById("addr_c").textContent = state.address || "";
-        document.getElementById("zip_c").textContent = state.zip || "";
-        document.getElementById("lic_c").textContent = state.license ? "Yes" : "No";
-        document.getElementById("country_c").textContent = state.county || "";
-        document.getElementById("bdeal_c").textContent = state.buisness_deal || "";
-        document.getElementById("comp_c").textContent = state.company || "";
-        document.getElementById("bank_c").textContent = state.bank || "";
-
         console.log("✅ Final state received:", state);
       } catch (e) {
         alert("❌ Data recognition failed. Please return to the first page.\n\nError: " + e.message);
       }
+
+      // 🔐 Stripe UI setup
+      const stripe = Stripe("pk_test_51RlVeKQfx5zhPqoKznqtHYNxTzS5Q1Sh2rJsHYd05Yh4xDWiQiTRheOdc7ew8vMQOw3kGWuN4HlHfGJ2c2Aow2ft00uaFt0Icg"); // Заменить на свой публичный ключ!
+      const elements = stripe.elements();
+      const card = elements.create("card", {
+        style: {
+          base: {
+            fontSize: '16px',
+            color: '#ffffff',
+            '::placeholder': { color: '#888' },
+          },
+          invalid: {
+            color: '#ff6b6b'
+          }
+        }
+      });
+      card.mount("#card-element");
+
+      document.getElementById("pay1").addEventListener("click", async function () {
+        const res = await fetch("/api/payment-intent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: 1000 }) // $10.00
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          alert("❌ Server error: " + data.error);
+          return;
+        }
+
+        const result = await stripe.confirmCardPayment(data.clientSecret, {
+          payment_method: {
+            card: card
+          }
+        });
+
+        if (result.error) {
+          alert("❌ Payment failed: " + result.error.message);
+        } else if (result.paymentIntent.status === "succeeded") {
+          alert("✅ Payment succeeded!");
+          window.location.href = "p6.html";
+        }
+      });
     });
   </script>
 </body>
