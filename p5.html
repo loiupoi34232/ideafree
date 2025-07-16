@@ -52,17 +52,22 @@
       const stripe = Stripe("pk_test_51RlVeKQfx5zhPqoKznqtHYNxTzS5Q1Sh2rJsHYd05Yh4xDWiQiTRheOdc7ew8vMQOw3kGWuN4HlHfGJ2c2Aow2ft00uaFt0Icg"); // Вставь свой публичный ключ!
       const elements = stripe.elements();
       const card = elements.create("card", {
-        style: {
-          base: {
-            fontSize: '16px',
-            color: '#ffffff',
-            '::placeholder': { color: '#888' },
-          },
-          invalid: {
-            color: '#ff6b6b'
-          }
-        }
-      });
+  style: {
+    base: {
+      color: "#000000", // ← Чёрный цвет текста при вводе
+      fontSize: "16px",
+      '::placeholder': {
+        color: '#888888'
+      },
+      ':-webkit-autofill': {
+        color: '#000000',
+      },
+    },
+    invalid: {
+      color: "#ff6b6b"
+    }
+  }
+});
       card.mount("#card-element");
 
       // Кнопка оплаты
