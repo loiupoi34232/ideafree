@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LiveWorks</title>
+  <link rel="stylesheet" href="reg.css"/>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  <div id="includedContent"></div>
+
+  <h1 class="center">
+    LiveWorks
+  </h1>
+
+  <p class="center"><font color="#008000">Congratulations! Your now can distribute your awesome project!</font></p>
+  <br>
+  <p class="center">Selected Plan: <b>FORWARD+</b></p>
+  <br><br><br><br>
+<script>
+      document.getElementById("pay1").addEventListener("click", async () => {
+        try {
+          const res = await fetch("/api/payment-intent", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount: 100, currency: 'usd' }) // $10 = 1000 cents
+          });
+
+          const data = await res.json();
+          if (data.error) {
+            alert("❌ Server error: " + data.error);
+            return;
+          }
+
+          const result = await stripe.confirmCardPayment(data.clientSecret, {
+            payment_method: { card: card }
+          });
+
+          if (result.error) {
+            alert("❌ Payment error: " + result.error.message);
+          } else if (result.paymentIntent.status === "succeeded") {
+            alert("✅ Payment successful!");
+            window.location.href = "p4.html";
+          }
+        } catch (err) {
+          alert("❌ Payment request failed: " + err.message);
+        }
+      });
+      </script>
+</body>
+</html>
