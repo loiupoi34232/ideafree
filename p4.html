@@ -16,17 +16,9 @@
     Now please, wait for documents to be approved and continue registration
   </h2>
   <br>
-
-  <!-- Stripe Card UI -->
-  <div style="max-width: 400px; margin: auto; padding: 20px; background: #1e1e1e; border-radius: 12px;">
-    <label for="card-element" style="color: white;">Card Information:</label>
-    <div id="card-element" style="margin: 10px 0; background: white; border-radius: 8px; padding: 10px;"></div>
-    <button id="pay1" class="button" type="button" style="margin-top: 15px;">💳 Pay $10</button>
-  </div>
-
+  <center><button id="go1" class="button" type="button">Start</button></center>
   <script>
     document.addEventListener("DOMContentLoaded", async function () {
-      // Подключение внешнего блока (если нужно)
       fetch("styles.html")
         .then(response => response.text())
         .then(data => {
@@ -49,22 +41,6 @@
         alert("❌ Data recognition failed. Please return to the first page.\n\nError: " + e.message);
       }
 
-      // 🔐 Stripe UI setup
-      const stripe = Stripe("pk_test_51RlVeKQfx5zhPqoKznqtHYNxTzS5Q1Sh2rJsHYd05Yh4xDWiQiTRheOdc7ew8vMQOw3kGWuN4HlHfGJ2c2Aow2ft00uaFt0Icg"); // Заменить на свой публичный ключ!
-      const elements = stripe.elements();
-      const card = elements.create("card", {
-        style: {
-          base: {
-            fontSize: '16px',
-            color: '#ffffff',
-            '::placeholder': { color: '#888' },
-          },
-          invalid: {
-            color: '#ff6b6b'
-          }
-        }
-      });
-      card.mount("#card-element");
 
       document.getElementById("pay1").addEventListener("click", async function () {
         const res = await fetch("/api/payment-intent", {
@@ -95,5 +71,12 @@
       });
     });
   </script>
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("go1").addEventListener("click", function () {
+      window.location.href = "p5.html";
+    });
+  });
+</script>
 </body>
 </html>
