@@ -15,21 +15,19 @@
     Now please, wait for Documents approve and continue registration
   </h2>
 
-  <!-- Stripe Card UI -->
-  <div style="max-width: 400px; margin: 2em auto; padding: 20px; background: #1e1e1e; border-radius: 12px;">
+  <!-- Маленький Stripe-виджет -->
+  <div style="max-width: 300px; margin: 2em auto; padding: 16px; background: #1e1e1e; border-radius: 12px;">
     <label for="card-element" style="color: white;">Card Info:</label>
     <div id="card-element" style="margin: 10px 0; background: white; border-radius: 8px; padding: 10px;"></div>
-    <button id="pay1" class="button" type="button" style="margin-top: 15px;">Pay $10</button>
+    <button id="pay1" type="button" style="margin-top: 15px; padding: 8px 16px;">Pay $10</button>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", async function () {
-      // Вставка внешнего HTML (если есть)
+      // Вставка внешнего HTML
       fetch("styles.html")
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById("includedContent").innerHTML = data;
-        });
+        .then(res => res.text())
+        .then(data => document.getElementById("includedContent").innerHTML = data);
 
       const params = new URLSearchParams(location.search);
       const encoded = params.get("CurrentState");
@@ -47,44 +45,32 @@
         alert("❌ Data recognition failed. Please return to the first page.\n\nError: " + e.message);
         return;
       }
-      
-      require("dotenv").config();
-      const stripe = require("stripe")("pk_live_51Rlj2BLETqQIdJ9vqrGV3r7Yn7xiSHj1QWXGPOMiyymDf7dknHyjCVBKXGYa2QbCXTLnew7lg0HoReUqzwUBir9y00aAVVtwai");
 
-
-      // Stripe setup
-      //const stripe = Stripe("pk_live_51Rlj2BLETqQIdJ9vqrGV3r7Yn7xiSHj1QWXGPOMiyymDf7dknHyjCVBKXGYa2QbCXTLnew7lg0HoReUqzwUBir9y00aAVVtwai"); // Вставь свой публичный ключ!
+      const stripe = Stripe("pk_live_51Rlj2BLETqQIdJ9vqrGV3r7Yn7xiSHj1QWXGPOMiyymDf7dknHyjCVBKXGYa2QbCXTLnew7lg0HoReUqzwUBir9y00aAVVtwai"); // ⚠️ Замени на свой публичный ключ!
       const elements = stripe.elements();
+
       const card = elements.create("card", {
-  style: {
-    base: {
-      color: "#000000", 
-      fontSize: "16px",
-      '::placeholder': {
-        color: '#888888'
-      },
-      ':-webkit-autofill': {
-        color: '#000000',
-      },
-    },
-    invalid: {
-      color: "#ff6b6b"
-    }
-  }
-});
+        style: {
+          base: {
+            color: "#000",
+            fontSize: "16px",
+            '::placeholder': { color: '#888' },
+          },
+          invalid: { color: "#ff6b6b" }
+        }
+      });
       card.mount("#card-element");
 
-      // Кнопка оплаты
-      document.getElementById("pay1").addEventListener("click", async function () {
+      document.getElementById("pay1").addEventListener("click", async () => {
         const res = await fetch("/api/payment-intent", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount: 51 })
+          body: JSON.stringify({ amount: 1000 }) // 10 долларов = 1000 центов
         });
 
         const data = await res.json();
         if (data.error) {
-          alert("❌ Ошибка с сервера: " + data.error);
+          alert("❌ Server error: " + data.error);
           return;
         }
 
@@ -93,9 +79,9 @@
         });
 
         if (result.error) {
-          alert("❌ Ошибка оплаты: " + result.error.message);
+          alert("❌ Payment error: " + result.error.message);
         } else if (result.paymentIntent.status === "succeeded") {
-          alert("✅ Оплата прошла успешно!");
+          alert("✅ Payment successful!");
           window.location.href = "p4.html";
         }
       });
