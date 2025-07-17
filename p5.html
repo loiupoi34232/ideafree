@@ -65,7 +65,7 @@
         const res = await fetch("/api/payment-intent", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount: 1000 }) // 10 долларов = 1000 центов
+          body: JSON.stringify({ amount: 5, currency: 'usd' }) 
         });
 
         const data = await res.json();
