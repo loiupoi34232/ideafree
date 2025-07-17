@@ -8,16 +8,18 @@
   <script src="https://js.stripe.com/v3/"></script>
 </head>
 
-<body style="background-color: #121212; color: white; font-family: sans-serif;">
+<body>
   <div id="includedContent"></div>
 
   <h2 class="center">
     ✔️ Congratulations! You completed LiveWorks Pre-Registration Successfully!<br>
     Now please, wait for documents to be approved and continue registration
   </h2>
+    <p class="center"><font color="#008000">Your Documents has been aldery checked! Now pay contribution for distibution!</font></p>
   <br>
-  <center><button id="go1" class="button" type="button">Start</button></center>
+  <center><button id="go1" class="button" type="button">Continue</button></center>
   <script>
+    let encoded;
     document.addEventListener("DOMContentLoaded", async function () {
       fetch("styles.html")
         .then(response => response.text())
@@ -26,7 +28,7 @@
         });
 
       const params = new URLSearchParams(location.search);
-      const encoded = params.get("CurrentState");
+      encoded = params.get("CurrentState");
 
       if (!encoded) {
         alert("❌ Missing registration data. Please start from Step 1.");
@@ -42,39 +44,11 @@
       }
 
 
-      document.getElementById("pay1").addEventListener("click", async function () {
-        const res = await fetch("/api/payment-intent", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount: 1000 }) // $10.00
-        });
-
-        const data = await res.json();
-
-        if (data.error) {
-          alert("❌ Server error: " + data.error);
-          return;
-        }
-
-        const result = await stripe.confirmCardPayment(data.clientSecret, {
-          payment_method: {
-            card: card
-          }
-        });
-
-        if (result.error) {
-          alert("❌ Payment failed: " + result.error.message);
-        } else if (result.paymentIntent.status === "succeeded") {
-          alert("✅ Payment succeeded!");
-          window.location.href = "p6.html";
-        }
-      });
+      
     });
-  </script>
-  <script>
   document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("go1").addEventListener("click", function () {
-      window.location.href = "p5.html";
+      window.location.href = "p5.html"+"?CurrentState="+encoded;
     });
   });
 </script>
