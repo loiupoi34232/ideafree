@@ -47,9 +47,13 @@
         alert("❌ Data recognition failed. Please return to the first page.\n\nError: " + e.message);
         return;
       }
+      
+      require("dotenv").config();
+      const stripe = require("stripe")(process.env.STRIPE_PUBLIC_KEY);
+
 
       // Stripe setup
-      const stripe = Stripe("pk_live_51Rlj2BLETqQIdJ9vqrGV3r7Yn7xiSHj1QWXGPOMiyymDf7dknHyjCVBKXGYa2QbCXTLnew7lg0HoReUqzwUBir9y00aAVVtwai"); // Вставь свой публичный ключ!
+      //const stripe = Stripe("pk_live_51Rlj2BLETqQIdJ9vqrGV3r7Yn7xiSHj1QWXGPOMiyymDf7dknHyjCVBKXGYa2QbCXTLnew7lg0HoReUqzwUBir9y00aAVVtwai"); // Вставь свой публичный ключ!
       const elements = stripe.elements();
       const card = elements.create("card", {
   style: {
